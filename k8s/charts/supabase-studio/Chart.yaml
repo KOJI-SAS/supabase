@@ -1,0 +1,5 @@
+apiVersion: v2
+name: supabase-studio
+description: The API Gateway service is part of the recommendations systems
+type: application
+version: 0.0.1
