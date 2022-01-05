@@ -64,5 +64,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+{{- if .Values.storage.persistence.enable }}
         - name: storage-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: {{ include "supabase.storage.fullname" . }}
+{{- end }}
