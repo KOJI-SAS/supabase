@@ -20,6 +20,7 @@ global:
 # my-release-rest
 
 studio:
+  enable: true
   replicaCount: 1
   image:
     repository: supabase/studio
@@ -134,7 +135,7 @@ auth:
 
   environment:
     GOTRUE_API_HOST: "0.0.0.0"
-    GOTRUE_API_PORT: "80"
+    GOTRUE_API_PORT: "9999"
     GOTRUE_DB_DRIVER: postgres
     GOTRUE_DB_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres?search_path=auth
     GOTRUE_SITE_URL: ${SITE_URL}
@@ -160,7 +161,7 @@ auth:
 
   service:
     type: ClusterIP
-    port: 80
+    port: 9999
 
   ingress:
     enabled: false
@@ -606,6 +607,156 @@ kong:
   affinity: {}
 
   config: {}
+  # config: |
+  #   _format_version: "1.1"
+
+  #   ###
+  #   ### Consumers / Users
+  #   ###
+  #   consumers:
+  #     - username: anon
+  #       keyauth_credentials:
+  #         - key: JWT_ANON_KEY
+  #     - username: service_role
+  #       keyauth_credentials:
+  #         - key: JWT_SERVICE_KEY
+
+  #   ###
+  #   ### Access Control List
+  #   ###
+  #   acls:
+  #     - consumer: anon
+  #       group: anon
+  #     - consumer: service_role
+  #       group: admin
+
+  #   ###
+  #   ### API Routes
+  #   ###
+  #   services:
+  #     ## Open Auth routes
+  #     - name: auth-v1-open
+  #       url: http://svc.cluster.local:9999/verify
+  #       routes:
+  #         - name: auth-v1-open
+  #           strip_path: true
+  #           paths:
+  #             - /auth/v1/verify
+  #       plugins:
+  #         - name: cors
+  #     - name: auth-v1-open-callback
+  #       url: http://svc.cluster.local:9999/callback
+  #       routes:
+  #         - name: auth-v1-open-callback
+  #           strip_path: true
+  #           paths:
+  #             - /auth/v1/callback
+  #       plugins:
+  #         - name: cors
+  #     - name: auth-v1-open-authorize
+  #       url: http://svc.cluster.local:9999/authorize
+  #       routes:
+  #         - name: auth-v1-open-authorize
+  #           strip_path: true
+  #           paths:
+  #             - /auth/v1/authorize
+  #       plugins:
+  #         - name: cors
+
+  #     ## Secure Auth routes
+  #     - name: auth-v1
+  #       _comment: "GoTrue: /auth/v1/* -> http://svc.cluster.local:9999/*"
+  #       url: http://svc.cluster.local:9999/
+  #       routes:
+  #         - name: auth-v1-all
+  #           strip_path: true
+  #           paths:
+  #             - /auth/v1/
+  #       plugins:
+  #         - name: cors
+  #         - name: key-auth
+  #           config:
+  #             hide_credentials: false
+  #         - name: acl
+  #           config:
+  #             hide_groups_header: true
+  #             allow:
+  #               - admin
+  #               - anon
+
+  #     ## Secure REST routes
+  #     - name: rest-v1
+  #       _comment: "PostgREST: /rest/v1/* -> http://DATABASE_ENDPOINT:3000/*"
+  #       url: http://DATABASE_ENDPOINT:3000/
+  #       routes:
+  #         - name: rest-v1-all
+  #           strip_path: true
+  #           paths:
+  #             - /rest/v1/
+  #       plugins:
+  #         - name: cors
+  #         - name: key-auth
+  #           config:
+  #             hide_credentials: true
+  #         - name: acl
+  #           config:
+  #             hide_groups_header: true
+  #             allow:
+  #               - admin
+  #               - anon
+
+  #     ## Secure Realtime routes
+  #     - name: realtime-v1
+  #       _comment: "Realtime: /realtime/v1/* -> ws://svc.cluster.local:4000/socket/*"
+  #       url: http://svc.cluster.local:4000/socket/
+  #       routes:
+  #         - name: realtime-v1-all
+  #           strip_path: true
+  #           paths:
+  #             - /realtime/v1/
+  #       plugins:
+  #         - name: cors
+  #         - name: key-auth
+  #           config:
+  #             hide_credentials: false
+  #         - name: acl
+  #           config:
+  #             hide_groups_header: true
+  #             allow:
+  #               - admin
+  #               - anon
+
+  #     ## Storage routes: the storage server manages its own auth
+  #     - name: storage-v1
+  #       _comment: "Storage: /storage/v1/* -> http://svc.cluster.local:5000/*"
+  #       url: http://svc.cluster.local:5000/
+  #       routes:
+  #         - name: storage-v1-all
+  #           strip_path: true
+  #           paths:
+  #             - /storage/v1/
+  #       plugins:
+  #         - name: cors
+
+  #     ## Secure Database routes
+  #     - name: meta
+  #       _comment: "pg-meta: /pg/* -> http://svc.cluster.local:8080/*"
+  #       url: http://svc.cluster.local:8080/
+  #       routes:
+  #         - name: meta-all
+  #           strip_path: true
+  #           paths:
+  #             - /pg/
+  #       plugins:
+  #         - name: key-auth
+  #           config:
+  #             hide_credentials: false
+  #         - name: acl
+  #           config:
+  #             hide_groups_header: true
+  #             allow:
+  #               - admin
+
 
 
 
